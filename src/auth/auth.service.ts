@@ -4,7 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
-    constructor(private jwtTokenService: JwtService, private model: PrismaService) { }
+    constructor(private jwtTokenService: JwtService, private prisma: PrismaService) { }
 
     decodeJwt(token: string): {} {
         return this.jwtTokenService.decode(token);
@@ -16,7 +16,7 @@ export class AuthService {
 
     async checkUser(User?: { auth?: { user_id?: number } }) {
         const user_id = User?.auth?.user_id;
-        const result = await this.model.user.findFirst({
+        const result = await this.prisma.user.findFirst({
             where: {
                 user_id: user_id
             }
