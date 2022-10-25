@@ -9,18 +9,26 @@ export class productService {
     async getList(filters?: Filters) {
         try {
             const pagination = this.prisma.paginate(filters.page, filters.perPage)
-            const search = filters.search;
-            delete filters.page, delete filters.perPage, delete filters.search;
+            const search = filters.search !== undefined ? {
+                OR: [
+                    { code: { contains: filters.search } },
+                    { name: { contains: filters.search } }
+                ]
+            } : {};
+
+            let sort = {}
+            sort[filters.sort !== undefined ? filters.sort : 'id'] = filters.order !== undefined ? filters.order : 'desc';
+
+            delete filters.page, delete filters.perPage, delete filters.search, delete filters.sort, delete filters.order;
+
             return await this.prisma.product.findMany({
                 skip: pagination.offset,
                 take: pagination.limit,
                 where: {
                     ...filters,
-                    OR: [
-                        { code: { contains: search } },
-                        { name: { contains: search } }
-                    ]
-                }
+                    ...search
+                },
+                orderBy: [sort]
             });
         } catch (error) {
             throw new ForbiddenException('Unable to get Products.');

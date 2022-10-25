@@ -12,4 +12,7 @@ export interface Filters {
     name ?: string;
     page ?: number;
     perPage ?: number;
+    status?: string;
+    sort?: string;
+    order?: string;
 }
