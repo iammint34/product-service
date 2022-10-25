@@ -12,4 +12,10 @@ export class PrismaService extends PrismaClient {
             }
         })
     }
+
+    paginate(page?: number, limit?: number): { limit: number, offset: number } {
+        const offset = (page > 1) ? ((page * limit) - limit) : 0
+        return { limit: Number(limit), offset: offset }
+    }
+
 }

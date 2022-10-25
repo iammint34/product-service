@@ -5,3 +5,11 @@ export interface Product {
     price: number;
     status: string;
 }
+
+export interface Filters {
+    search ?: string;
+    code ?: string;
+    name ?: string;
+    page ?: number;
+    perPage ?: number;
+}

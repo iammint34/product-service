@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post, Req, Res } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query, Req, Res } from "@nestjs/common";
 import { productService } from "./product.service";
-import { Product } from "./dto";
+import { Product, Filters } from "./dto";
 import { v4 as uuidv4 } from 'uuid';
 
 @Controller('product')
@@ -8,8 +8,8 @@ export class productController {
     constructor(private service: productService) { }
 
     @Get()
-    handleList() {
-        return this.service.getList()
+    async handleList(@Query() query: Filters) {
+        return await this.service.getList(query);
     }
 
     @Post()
