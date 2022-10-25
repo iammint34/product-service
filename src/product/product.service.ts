@@ -35,6 +35,17 @@ export class productService {
         }
     }
 
+    async getByUuid(uuid: string) {
+        try {
+            return await this.prisma.product.findUnique({
+                where: { uuid: uuid }
+            })
+        } catch (error) {
+            console.log(error)
+            throw new ForbiddenException('Unable to get Product.');
+        }
+    }
+
 
     async createRecord(data: Prisma.ProductCreateInput) {
         try {
