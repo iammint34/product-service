@@ -5,7 +5,13 @@ import { Filters } from "./dto";
 
 @Injectable({})
 export class productService {
-    constructor(private prisma: PrismaService) { }
+    constructor(private prisma: PrismaService) {
+        prisma.$on<any>('query', (event: Prisma.QueryEvent) => {
+            console.log('Query: ' + event.query)
+            console.log('Params: ' + event.params)
+            console.log('Duration: ' + event.duration + 'ms')
+        });
+    }
     async getList(filters?: Filters) {
         try {
             const pagination = this.prisma.paginate(filters.page, filters.perPage)
@@ -19,6 +25,7 @@ export class productService {
             let sort = {}
             sort[filters.sort !== undefined ? filters.sort : 'id'] = filters.order !== undefined ? filters.order : 'desc';
 
+            // remove unnecessary product filters
             delete filters.page, delete filters.perPage, delete filters.search, delete filters.sort, delete filters.order;
 
             return await this.prisma.product.findMany({
@@ -46,10 +53,65 @@ export class productService {
         }
     }
 
+    async updateStatusToActive(payload: string[]) {
+        try {
+            return await this.prisma.product.updateMany({
+                where: {
+                    uuid: { in: payload }
+                },
+                data: {
+                    status: 'ACTIVE'
+                }
+            })
+        } catch (error) {
+            throw new ForbiddenException('Unable to update Product Status.');
+        }
+    }
+
+    async updateStatusToInactive(payload: string[]) {
+        try {
+            return await this.prisma.product.updateMany({
+                where: {
+                    uuid: { in: payload }
+                },
+                data: {
+                    status: 'INACTIVE'
+                }
+            })
+        } catch (error) {
+            throw new ForbiddenException('Unable to update Product Status.');
+        }
+    }
+
+    async deleteRecordByBulk(payload: string[]) {
+        try {
+            return await this.prisma.product.deleteMany({
+                where: {
+                    uuid: { in: payload }
+                }
+            })
+        } catch (error) {
+            throw new ForbiddenException('Unable to update Product Status.');
+        }
+    }
+
 
     async createRecord(data: Prisma.ProductCreateInput) {
         try {
             return await this.prisma.product.create({
+                data
+            })
+        } catch (error) {
+            throw new ForbiddenException('Product is already existing.');
+        }
+    }
+
+    async updateRecord(uuid: string, data: Prisma.ProductCreateInput) {
+        try {
+            return await this.prisma.product.update({
+                where: {
+                    uuid: uuid
+                },
                 data
             })
         } catch (error) {
