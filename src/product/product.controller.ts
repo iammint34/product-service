@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Query, Param, Patch, Delete } from "@nestjs/common";
 import { productService } from "./product.service";
-import { Product, Filters } from "./dto";
+import { CreateProduct, UpdateProduct } from "./dto";
 import { v4 as uuidv4 } from 'uuid';
 
 @Controller('product')
@@ -8,7 +8,16 @@ export class productController {
     constructor(private service: productService) { }
 
     @Get()
-    async handleList(@Query() query: Filters) {
+    async handleList(@Query() query: {
+        search?: string;
+        code?: string;
+        name?: string;
+        page?: number;
+        perPage?: number;
+        status?: string;
+        sort?: string;
+        order?: string;
+    }) {
         return await this.service.getList(query);
     }
 
@@ -28,7 +37,7 @@ export class productController {
     }
 
     @Patch(':uuid')
-    async handleUpdateRecord(@Param() param: { uuid: string }, @Body() dto: Product) {
+    async handleUpdateRecord(@Param() param: { uuid: string }, @Body() dto: UpdateProduct) {
         return await this.service.updateRecord(param.uuid, dto);
     }
 
@@ -38,7 +47,7 @@ export class productController {
     }
 
     @Post()
-    async handleCreateRecord(@Body() dto: Product) {
+    async handleCreateRecord(@Body() dto: CreateProduct) {
         dto.uuid = uuidv4(); // Set UUID
         dto.status = 'ACTIVE' // Set Status Active by Default
         return await this.service.createRecord(dto);

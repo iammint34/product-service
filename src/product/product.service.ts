@@ -1,7 +1,6 @@
 import { Injectable, ForbiddenException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
-import { Filters } from "./dto";
 
 @Injectable({})
 export class productService {
@@ -12,7 +11,16 @@ export class productService {
             console.log('Duration: ' + event.duration + 'ms')
         });
     }
-    async getList(filters?: Filters) {
+    async getList(filters?: {
+        search?: string;
+        code?: string;
+        name?: string;
+        page?: number;
+        perPage?: number;
+        status?: string;
+        sort?: string;
+        order?: string;
+    }) {
         try {
             const pagination = this.prisma.paginate(filters.page, filters.perPage)
             const search = filters.search !== undefined ? {
@@ -106,7 +114,7 @@ export class productService {
         }
     }
 
-    async updateRecord(uuid: string, data: Prisma.ProductCreateInput) {
+    async updateRecord(uuid: string, data: Prisma.ProductUpdateInput) {
         try {
             return await this.prisma.product.update({
                 where: {
