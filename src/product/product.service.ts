@@ -50,10 +50,10 @@ export class productService {
         }
     }
 
-    async getByUuid(uuid: string) {
+    async getByUuid(id: number) {
         try {
             return await this.prisma.product.findUnique({
-                where: { uuid: uuid }
+                where: { id: parseInt(`${id}`) }
             })
         } catch (error) {
             console.log(error)
@@ -114,11 +114,11 @@ export class productService {
         }
     }
 
-    async updateRecord(uuid: string, data: Prisma.ProductUpdateInput) {
+    async updateRecord(id: number, data: Prisma.ProductUpdateInput) {
         try {
             return await this.prisma.product.update({
                 where: {
-                    uuid: uuid
+                    id: parseInt(`${id}`)
                 },
                 data
             })

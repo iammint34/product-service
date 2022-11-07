@@ -21,9 +21,13 @@ export class productController {
         return await this.service.getList(query);
     }
 
-    @Get(':uuid')
-    async handleGetByUuid(@Param() param: { uuid: string }) {
-        return await this.service.getByUuid(param.uuid);
+    /**
+     * Get Product By ID 
+     * Returns 1 Product
+     */
+    @Get(':id')
+    async handleGetByUuid(@Param() param: { id: number }) {
+        return await this.service.getByUuid(param.id);
     }
 
     @Patch('status/active')
@@ -36,9 +40,9 @@ export class productController {
         return await this.service.updateStatusToInactive(payload);
     }
 
-    @Patch(':uuid')
-    async handleUpdateRecord(@Param() param: { uuid: string }, @Body() dto: UpdateProduct) {
-        return await this.service.updateRecord(param.uuid, dto);
+    @Patch(':id')
+    async handleUpdateRecord(@Param() param: { id: number }, @Body() dto: UpdateProduct) {
+        return await this.service.updateRecord(param.id, dto);
     }
 
     @Delete('')
